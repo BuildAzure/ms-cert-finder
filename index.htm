@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"  id='top'>
+<head>
+    <title>Build Azure Exam Finder - searchable catalog of Microsoft certifications</title>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"> 
+
+    <link rel="stylesheet" type="text/css" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.4/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/jsQuizEngine.css">
+    <link rel="stylesheet" type="text/css" href="css/site.css">
+
+    <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.11.2.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/knockout/knockout-2.2.1.js"></script>
+    <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.4/bootstrap.min.js"></script>
+
+    <style>
+        .tags {
+            margin-top: 0.5em;
+        }
+        .tags > label {
+            margin-right: 0.5em;
+        }
+        .tags > label .glyphicon {
+            margin-left: 0.5em;
+        }
+
+        .exams {
+            margin-top: 2em;
+        }
+
+        .form-group .form-control, .form-group button {
+            margin-bottom: 0.5em;
+        }
+
+        .label {
+            font-size: 1em;
+            font-weight: normal;
+            line-height: 2.5em;
+        }
+
+        .publish-date, .exam-number, .update-date { 
+            font-weight: bold
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#book-filter" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">
+                <!--img alt="Brand" src="..."-->
+                Build Azure Exam Finder
+            </a>
+            </div>
+
+            <div id="book-filter" class="navbar-collapse collapse">
+                
+                <div class="navbar-right">
+                    <span class='navbar-text'><span id="exam-count">30+</span> Total Exams</span>
+                </div>
+
+            </div>
+
+        </div>
+    </nav>
+
+<div class="container">
+    <div class="container">
+        <div class="row">
+            <p>You can either browse through the list, or start by adding filters to narrow it down based on the tags for each certification exam.</p>
+        </div>
+        <div class="row">
+            <form class="form-inline" onsubmit="return false;">
+                <div class="form-group">
+                    <select id="filter-tags" class="form-control"></select>
+                    <button id="filter-go" class='btn btn-primary'>Add Filter</button>
+                    <button id="filter-clear" class='btn btn-primary'>Clear All</button>
+                </div>
+            </form>
+        </div>
+        <div class="row tags" id="selected-tags"></div>
+    </div>
+    <script>
+        $(function(){
+            $('#no-results').hide();
+
+            // Open all links in a new tab / window
+            $('.exam a').attr('target','_blank');
+
+            (function(){
+                /// Populate Tag selector dropdown in alphabetical order from tags used within the page.
+                var tags = [];
+                $('.tags > label').each(function(i, e){
+                    var elem = $(e),
+                        text = elem.text();
+                    if (tags.indexOf(text) <= -1) {
+                        tags.push(text)
+                    }
+                });
+                tags.sort();
+                tags.forEach(function(v){
+                    if ($('#filter-tags option[value="' + v + '"]').length === 0) {
+                        $('<option/>').val(v).text(v).appendTo('#filter-tags');
+                    }
+                });
+            })();
+
+            // Count the number of exams
+            $('#exam-count').text($('.exam').length);
+
+
+            // wire up click event of Filter button
+            $('#filter-go').click(function(){
+                var newSelectedTag = $('#filter-tags').val();
+
+                if ($('#selected-tags > label:contains("' + newSelectedTag + '")').length === 0) {
+                    $('<label/>').addClass('label').addClass('label-primary btn').text(newSelectedTag).
+                        append($('<span/>').addClass('glyphicon glyphicon-remove-circle')).
+                        appendTo('#selected-tags').
+                        click(function(){
+                            $(this).remove();
+                            performFilter();
+                        });
+                }
+
+                performFilter();               
+            });
+
+            $('#filter-clear').click(function(){
+                $('#selected-tags').children().remove();
+                performFilter();
+            });
+
+            function performFilter(){
+                if ($('#selected-tags label').length === 0){
+                    $('.exam').show();
+                } else {
+                    $('.exam').hide();
+                }
+
+                var examsToShow = $('.exam');
+                $('#selected-tags label').each(function(i, e) {
+                    var tagText = $(e).text();
+                    examsToShow = examsToShow.filter(function(i, e){
+                        var elem = $(e);
+                        return elem.find('.tags label:contains("' + tagText + '")').length > 0;
+                    });
+                });
+                examsToShow.show();
+
+                if ($('.exam:visible').length === 0){
+                    $('#no-results').show();
+                } else {
+                    $('#no-results').hide();
+                }
+            }
+
+        });
+    </script>
+
+
+<section class="exams">
+
+    <div id="no-results">
+        <h3>No exams match your selected filter. Please try again.</h3>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Universal Windows Platform - App Architecture and UX/UI</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-354</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">October 5, 2015</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Developer</label>
+                    <label class="label label-primary">UWP</label>
+                    <label class="label label-primary">Windows 10</label>
+                    <label class="label label-primary">MCSD: App Builder</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Universal Windows Platform - App Data, Services, and Coding Patterns</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-355</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">October 13, 2015</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Developer</label>
+                    <label class="label label-primary">UWP</label>
+                    <label class="label label-primary">Windows 10</label>
+                    <label class="label label-primary">MCSD: App Builder</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Developing Mobile Apps</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-357</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">July 22, 2016</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Developer</label>
+                    <label class="label label-primary">Mobile</label>
+                    <label class="label label-primary">Visual Studio</label>
+                    <label class="label label-primary">MCSA: Universal Windows Platform</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Planning for and Managing Devices in the Enterprise</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-398</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">November 24, 2015</span></div>
+            </div>
+            <div class="caption">
+                <p>
+                    <a href="https://buildazure.com/2017/03/02/70-398-planning-for-and-managing-devices-in-the-enterprise/">View Details</a>
+                </p>
+                <div class="tags">
+                    <label class="label label-primary">Identity</label>
+                    <label class="label label-primary">Azure AD</label>
+                    <label class="label label-primary">Devices</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Querying Microsoft SQL Server 2012/2014</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-461</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">June 11, 2012</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Data</label>
+                    <label class="label label-primary">SQL Server</label>
+                    <label class="label label-primary">MCSA: SQL Server 2012/2014</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Administering Microosft SQL Server 2012/2014 Databases</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-462</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">June 11, 2012</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Data</label>
+                    <label class="label label-primary">SQL Server</label>
+                    <label class="label label-primary">MCSA: SQL Server 2012/2014</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Implementing a Data Warehouse with Microsoft SQL Server 2012/2014</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-463</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">June 11, 2012</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Data</label>
+                    <label class="label label-primary">SQL Server</label>
+                    <label class="label label-primary">MCSA: SQL Server 2012/2014</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Developing Microsoft SQL Server Databases</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-464</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">June 11, 2012</span></div>
+            </div>
+            <div class="caption">
+                <p>
+                    <a href="https://buildazure.com/2017/03/14/70-464-developing-microsoft-sql-server-databases-certification-exam/">View Details</a>
+                </p>
+                <div class="tags">
+                    <label class="label label-primary">Data</label>
+                    <label class="label label-primary">SQL Server</label>
+                    <label class="label label-primary">MCSE: Data Management and Analytics</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Designing Database Solutions for Microsoft SQL Server</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-465</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">June 11, 2012</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Data</label>
+                    <label class="label label-primary">SQL Server</label>
+                    <label class="label label-primary">MCSE: Data Management and Analytics</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Implementing Data Models and Reports with Microsoft SQL Server</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-466</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">June 11, 2012</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Data</label>
+                    <label class="label label-primary">SQL Server</label>
+                    <label class="label label-primary">MCSE: Data Management and Analytics</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Designing Business Intelligence Solutions with Microsoft SQL Server</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-467</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">June 11, 2012</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Data</label>
+                    <label class="label label-primary">SQL Server</label>
+                    <label class="label label-primary">Business Intelligence</label>
+                    <label class="label label-primary">MCSE: Data Management and Analytics</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Designing and Implementing Cloud Data Platform Solutions</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-473</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">October 27, 2015</span></div>
+            </div>
+            <div class="caption">
+                <p>
+                    <a href="https://buildazure.com/2016/06/21/azure-certification-70-473-cloud-data-platform-solutions-specialist/">View Details</a>
+                </p>
+                <div class="tags">
+                    <label class="label label-primary">Azure</label>
+                    <label class="label label-primary">Data</label>
+                    <label class="label label-primary">SQL Server</label>
+                    <label class="label label-primary">Azure SQL</label>
+                    <label class="label label-primary">MCSA: Cloud Database Development</label>
+                    <label class="label label-primary">MCSE: Data Management and Analytics</label>
+                    <label class="label label-primary">MCSA: Cloud Platform</label>
+                    <label class="label label-primary">MCSE: Cloud Platform and Infrastructure</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Designing and Implementing Big Data Analytics Solutions</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-475</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">October 27, 2015</span></div>
+            </div>
+            <div class="caption">
+                <p>
+                    <a href="https://buildazure.com/2016/06/28/azure-certification-70-475-designing-and-implementing-big-data-analytics-solutions-specialist/">View Details</a>
+                </p>
+                <div class="tags">
+                    <label class="label label-primary">Azure</label>
+                    <label class="label label-primary">Data</label>
+                    <label class="label label-primary">Big Data</label>
+                    <label class="label label-primary">MCSE: Data Management and Analytics</label>
+                    <label class="label label-primary">MCSA: Cloud Platform</label>
+                    <label class="label label-primary">MCSE: Cloud Platform and Infrastructure</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Programming in HTML5 with JavaScript and CSS3</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-480</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">August 20, 2012</span></div>
+            </div>
+            <div class="caption">
+                <p>
+                    <a href="http://pietschsoft.com/post/2016/05/09/Study-Guide-for-70-480-Programming-HTML5-JavaScript-CSS3-Certification-Exam1">View Details</a>
+                </p>
+                <div class="tags">
+                    <label class="label label-primary">Developer</label>
+                    <label class="label label-primary">JavaScript</label>
+                    <label class="label label-primary">MCSA: Web Applications</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Programming in C#</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-483</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">October 12, 2012</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Developer</label>
+                    <label class="label label-primary">C#</label>
+                    <label class="label label-primary">Visual Studio</label>
+                    <label class="label label-primary">MCSA: Universal Windows Platform</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Developing ASP.NET MVC Web Applications</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-486</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">October 4, 2012</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Developer</label>
+                    <label class="label label-primary">ASP.NET MVC</label>
+                    <label class="label label-primary">Visual Studio</label>
+                    <label class="label label-primary">MCSA: Web Applications</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Developing Microsoft Azure Solutions</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-532</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">September 1, 2014</span></div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-sm-6"></div>
+                <div class="col-md-6 col-sm-6">Last Updated: <span class="update-date">November 22, 2016</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Azure</label>
+                    <label class="label label-primary">Developer</label>
+                    <label class="label label-primary">Visual Studio</label>
+                    <label class="label label-primary">MCSA: Cloud Platform</label>
+                    <label class="label label-primary">MCSE: Cloud Platform and Infrastructure</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Implementing Microsoft Azure Infrastructure Solutions</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-533</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">September 4, 2014</span></div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-sm-6"></div>
+                <div class="col-md-6 col-sm-6">Last Updated: <span class="update-date">November 22, 2016</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Azure</label>
+                    <label class="label label-primary">Infrastructure</label>
+                    <label class="label label-primary">MCSA: Cloud Platform</label>
+                    <label class="label label-primary">MCSE: Cloud Platform and Infrastructure</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Architecting Microsoft Azure Solutions</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-534</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">February 26, 2015</span></div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-sm-6"></div>
+                <div class="col-md-6 col-sm-6">Last Updated: <span class="update-date">November 22, 2016</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Azure</label>
+                    <label class="label label-primary">Architecture</label>
+                    <label class="label label-primary">MCSA: Cloud Platform</label>
+                    <label class="label label-primary">MCSE: Cloud Platform and Infrastructure</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Querying Data with Transact-SQL</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-761</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">October 18, 2016</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Data</label>
+                    <label class="label label-primary">SQL Server</label>
+                    <label class="label label-primary">MCSA: SQL 2016 Database Development</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Developing SQL Databases</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-762</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">August 26, 2016</span></div>
+            </div>
+            <div class="caption">
+                <p>
+                    <a href="https://buildazure.com/2017/02/28/70-762-developing-sql-databases-certification-exam/">View Details</a>
+                </p>
+                <div class="tags">
+                    <label class="label label-primary">Data</label>
+                    <label class="label label-primary">SQL Server</label>
+                    <label class="label label-primary">MCSA: SQL 2016 Database Development</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Administering a SQL Database Infrastructure</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-764</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">October 18, 2016</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Data</label>
+                    <label class="label label-primary">SQL Server</label>
+                    <label class="label label-primary">MCSA: SQL 2016 Database Administration</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Provisioning SQL Databases</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-765</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">August 26, 2016</span></div>
+            </div>
+            <div class="caption">
+                <p>
+                    <a href="https://buildazure.com/2017/02/22/70-765-provisioning-sql-databases-certification-exam/">View Details</a>
+                </p>
+                <div class="tags">
+                    <label class="label label-primary">Data</label>
+                    <label class="label label-primary">SQL Server</label>
+                    <label class="label label-primary">MCSA: SQL 2016 Database Administration</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Implementing a SQL Data Warehouse</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-767</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">October 18, 2016</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Data</label>
+                    <label class="label label-primary">SQL Server</label>
+                    <label class="label label-primary">MCSA: SQL 2016 Business Intelligence Development</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Developing SQL Data Models</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-768</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">August 26, 2016</span></div>
+            </div>
+            <div class="caption">
+                <p>
+                    <a href="https://buildazure.com/2017/02/25/70-768-developing-sql-data-models-certification-exam/">View Details</a>
+                </p>
+                <div class="tags">
+                    <label class="label label-primary">Data</label>
+                    <label class="label label-primary">SQL Server</label>
+                    <label class="label label-primary">MCSA: BI Reporting</label>
+                    <label class="label label-primary">MCSA: SQL 2016 Business Intelligence Development</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Analyzing Big Data with Microsoft R</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-773</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">January 3, 2017</span></div>
+            </div>
+            <div class="caption">
+                <p>
+                    <a href="https://buildazure.com/2017/02/16/70-773-analyzing-big-data-with-microsoft-r-certification-exam/">View Details</a>
+                </p>
+                <div class="tags">
+                    <label class="label label-primary">Microsoft R</label>
+                    <label class="label label-primary">Data</label>
+                    <label class="label label-primary">Big Data</label>
+                    <label class="label label-primary">MCSA: Data Science</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Perform Cloud Data Science with Azure Machine Learning</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-774</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">February 14, 2017</span></div>
+            </div>
+            <div class="caption">
+                <p>
+                    <a href="https://buildazure.com/2017/02/09/70-774-perform-cloud-data-science-with-azure-machine-learning-certification-exam/">View Details</a>
+                </p>
+                <div class="tags">
+                    <label class="label label-primary">Machine Learning</label>
+                    <label class="label label-primary">Data</label>
+                    <label class="label label-primary">Azure</label>
+                    <label class="label label-primary">Data Science</label>
+                    <label class="label label-primary">MCSA: Data Science</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Perform Data Engineering on Microsoft HD Insight</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-775</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">February 22, 2017</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Azure</label>
+                    <label class="label label-primary">Data</label>
+                    <label class="label label-primary">HD Insight</label>
+                    <label class="label label-primary">MCSA: Big Data Engineering</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Engineering Data with Microsoft Cloud Services (Planned)</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-776</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">TBD</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Azure</label>
+                    <label class="label label-primary">Data</label>
+                    <label class="label label-primary">MCSA: Big Data Engineering</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Implementing NoSQL Solutions with DocumentDB and Azure Search (Planned)</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-777</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">TBD</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Azure</label>
+                    <label class="label label-primary">NoSQL</label>
+                    <label class="label label-primary">DocumentDB</label>
+                    <label class="label label-primary">Azure Search</label>
+                    <label class="label label-primary">MCSA: Cloud Database Development</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="exam">
+        <div class="thumbnail">
+            <h3>Analyzing and Visualizing Data with Power BI (Planned)</h3>
+            <div class="row">
+                <div class="col-md-6 col-sm-6">Exam #: <span class="exam-number">70-778</span></div>
+                <div class="col-md-6 col-sm-6">Published: <span class="publish-date">TBD</span></div>
+            </div>
+            <div class="caption">
+                <div class="tags">
+                    <label class="label label-primary">Data</label>
+                    <label class="label label-primary">Power BI</label>
+                    <label class="label label-primary">Business Intelligence</label>
+                    <label class="label label-primary">MCSA: BI Reporting</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+</div>
+
+<div class="container">
+    <footer>
+        <em>Disclaimer: This site / project is not affiliated with Microsoft. It is put together and maintained as a service to the community by <a href="http://buildazure.com">Chris Pietschmann</a>. Thanks!!</em>
+        <br/>
+        Copyright &copy; <a href="http://BuildAzure.com">Build Azure</a>. Licensed under <a href="https://github.com/BuildAzure/ms-cert-finder/blob/master/LICENSE">MIT License</a>
+    </footer>
+</div>
+
+</body>
